@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#122E45">
+<title>EXPRESS PRESSING — Gestion réseau</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--b9:#122E45;--b8:#173C5A;--b7:#1E4870;--b1:#E7EFF6;--o5:#E2802E;--bg:#F2F5F9;--l:#E2E8F0;--t:#152233;--m:#5C6B7C;--g:#268A54;--gb:#E4F5EC;--y:#C98A0F;--yb:#FBF0DA;--r:#C64236;--rb:#FBE7E5}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);font:14px Inter,sans-serif;color:var(--t);overflow:hidden}
+button{font:inherit;cursor:pointer}
+input,select{font:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--l);border-radius:8px;background:#fff;min-width:0;width:100%}
+.app{display:flex;height:100dvh}
+.side{width:230px;background:var(--b9);color:#fff;display:flex;flex-direction:column;flex-shrink:0;transition:transform .2s;z-index:30}
+.sh{padding:20px 18px;border-bottom:1px solid #ffffff14;font:800 14px Sora}
+.sh small{display:block;color:var(--o5);font-size:9.5px;letter-spacing:.08em;margin-top:3px}
+.nav{flex:1;overflow:auto;padding:12px 10px}
+.ni{display:flex;gap:12px;width:100%;padding:10px 12px;border:0;border-radius:8px;margin-bottom:2px;background:none;color:#ffffffad;font-size:13px;font-weight:500;text-align:left}
+.ni:hover{background:#ffffff10;color:#fff}.ni.on{background:var(--o5);color:#fff;font-weight:700}
+.sf{padding:14px 18px;border-top:1px solid #ffffff14;font-size:10px;color:#ffffff66}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{height:60px;flex-shrink:0;background:#fff;border-bottom:1px solid var(--l);display:flex;align-items:center;gap:12px;padding:0 20px}
+.top h2{font:700 17px Sora;color:var(--b9);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top span{font-size:12px;color:var(--m);font-weight:600;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cont{flex:1;overflow:auto;padding:24px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kpi,.panel{background:#fff;border:1px solid var(--l);border-radius:14px;padding:16px}
+.kpi{border-radius:9px}.kpi span{font-size:12px;color:var(--m);font-weight:500}.kpi b{display:block;font:700 20px Sora;color:var(--b9);margin-top:6px}
+.panel{margin-bottom:16px;overflow-x:auto}.panel h3{font:700 14.5px Sora;color:var(--b9);margin-bottom:14px}
+.btn{font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:8px;border:1px solid var(--l);background:#fff;color:var(--b8)}
+.btn:hover{background:var(--b1)}.btn.o{background:var(--o5);color:#fff;border-color:var(--o5)}.btn.s{padding:5px 9px;font-size:11.5px}
+.f{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;align-items:end}
+.f label{font-size:11.5px;color:var(--m);font-weight:600;display:block;margin-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;color:var(--m);font-weight:600;padding:8px;border-bottom:1px solid var(--l);white-space:nowrap}
+td{padding:9px 8px;border-bottom:1px solid #eef2f6;white-space:nowrap}
+td input{width:110px}
+.pill{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;background:var(--b1);color:var(--b7)}
+.pill.ok{background:var(--gb);color:var(--g)}.pill.w{background:var(--yb);color:var(--y)}.pill.no{background:var(--rb);color:var(--r)}
+.em{color:var(--m);padding:18px;text-align:center}
+.per{display:flex;gap:8px;align-items:center;margin-bottom:14px;max-width:320px}
+#login{position:fixed;inset:0;z-index:99;background:linear-gradient(135deg,#0f2540,#1a3a63);display:flex;align-items:center;justify-content:center;padding:20px}
+#login>div{background:#fff;border-radius:16px;padding:28px 24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px}
+.burger{display:none}
+.fab{position:fixed;right:18px;bottom:22px;z-index:25;display:none;align-items:center;gap:8px;padding:14px 20px;border:0;border-radius:999px;background:var(--o5);color:#fff;font:700 14px Inter,sans-serif;box-shadow:0 8px 22px -6px rgba(201,99,26,.65)}
+.fab b{font-size:22px;line-height:1}
+.side .out{margin:0 10px 12px;width:auto}
+#pub{position:fixed;inset:0;overflow:auto;background:var(--bg);display:none}
+.ph{background:var(--b9);color:#fff;padding:22px 20px;display:flex;flex-direction:column;gap:4px}.ph b{font:800 18px Sora}.ph span{color:var(--o5);font-size:12px;font-weight:600}
+.pw{max-width:720px;margin:0 auto;padding:18px}
+@media(max-width:800px){.side{position:fixed;inset:0 auto 0 0;transform:translateX(-100%)}.side.open{transform:none}.burger{display:block}.lo{display:none}.top h2{font-size:16px}.top span{font-size:11px}.cont{padding-bottom:90px}.kpis{grid-template-columns:1fr 1fr}.cont{padding:14px}.top{padding:0 12px}}
+</style>
+</head>
+<body>
+<div id="login"><div>
+<div style="text-align:center;margin-bottom:8px"><div style="font:800 17px Sora;color:#0f2540">EXPRESS PRESSING</div><div style="font-size:13px;color:#6b7280">Accès réservé — connectez-vous</div></div>
+<input id="ln" placeholder="Votre nom" autocomplete="username">
+<input id="lp" type="password" placeholder="Code d’accès" onkeydown="if(event.key==='Enter')login()">
+<button class="btn o" style="padding:11px" onclick="login()">Se connecter</button>
+<button class="btn" onclick="showPub()">Je suis client : voir la page client</button>
+<div id="le" style="color:#dc2626;font-size:12.5px;text-align:center;min-height:16px"></div>
+</div></div>
+<div id="pub"></div>
+<div class="app">
+<div class="side" id="side">
+<div class="sh">EXPRESS PRESSING<small>GESTION RÉSEAU</small></div>
+<div class="nav" id="nav"></div>
+<button class="ni out" onclick="logout()"><span>🚪</span>Déconnexion</button>
+<div class="sf">© 2026 Express Pressing<br>Un réseau, une gestion, une vision.</div>
+</div>
+<div class="main">
+<div class="top">
+<button class="btn burger" onclick="$('side').classList.toggle('open')">☰</button>
+<h2 id="ttl"></h2><span id="who"></span>
+<button class="btn s lo" onclick="logout()">Déconnexion</button>
+</div>
+<div class="cont" id="cont"></div>
+<button class="fab" id="fab" onclick="newO()"><b>+</b> Nouvelle commande</button>
+</div>
+</div>
+<script>
+/* Firebase : même projet que Mperfect Pub (données dans des collections séparées "ep-…").
+   Les données de chaque poste sont enregistrées automatiquement et apparaissent en direct chez le PDG. */
+const FB={apiKey:"AIzaSyBaz__Dzdrwame2s7yp62Yv-os_ft-A8-4",authDomain:"mperfect-pub-prime.firebaseapp.com",projectId:"mperfect-pub-prime",appId:"1:142967507124:web:5f9e5667f8aec550beafe1"};
+const REC=['orders','cards','expenses'];
+const K='express-pressing',uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const e=s=>String(s??'').replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+const F=n=>(+n||0).toLocaleString('fr-FR')+' F',$=id=>document.getElementById(id),v=id=>$(id).value,today=()=>new Date().toISOString().slice(0,10);
+const D=()=>({users:[{id:'pdg',name:'PDG',role:'pdg',pin:'0000'}],postes:[],services:[{id:'s1',name:'Lavage simple',prix:300},{id:'s2',name:'Lavage + repassage',prix:300},{id:'s3',name:'Repassage seul',prix:300}],plans:[],cards:[],orders:[],expenses:[],totalActions:100,payout:100,n:1});
+let S=Object.assign(D(),JSON.parse(localStorage.getItem(K)||'{}')),me=null,page='dash',per='',db=null,PI=null,live=0,pl=0;
+const lsave=()=>localStorage.setItem(K,JSON.stringify(S)),cx=p=>p&&p.catch&&p.catch(console.error);
+const save=()=>{lsave();if(!db)return;cx(db.doc('ep-config/main').set({users:S.users,postes:S.postes,services:S.services,plans:S.plans,totalActions:S.totalActions,payout:S.payout}));
+cx(db.doc('ep-public/main').set({services:S.services,plans:S.plans.map(p=>({name:p.name,kg:p.kg,prix:p.prix,jours:p.jours})),postes:S.postes.map(p=>({name:p.name,loc:p.loc}))}))};
+const put=(c,o)=>{lsave();db&&cx(db.collection('ep-'+c).doc(o.id).set(o))},rm=(c,id)=>{lsave();db&&cx(db.collection('ep-'+c).doc(id).delete())};
+const ready=(async()=>{if(!FB.apiKey)return;const L=s=>new Promise(r=>{const x=document.createElement('script');x.src='https://www.gstatic.com/firebasejs/10.13.0/firebase-'+s+'-compat.js';x.onload=r;document.head.append(x)});
+await L('app');await L('firestore');firebase.initializeApp(FB);db=firebase.firestore();try{db.enablePersistence({synchronizeTabs:true}).catch(()=>{})}catch(x){}})();
+/* Page client : ne charge QUE le document public (tarifs, formules, lieux). */
+async function pubListen(){await ready;if(!db||pl)return;pl=1;db.doc('ep-public/main').onSnapshot(d=>{if(d.exists){PI=d.data();pubInfo()}})}
+/* Espace interne : chargé seulement après une connexion réussie. */
+async function startInterior(){await ready;if(!db||live)return;live=1;
+const re=()=>{if(!me)return;me=S.users.find(u=>u.id===me.id);if(!me)return logout();if($('pub').style.display!=='block'&&!document.activeElement.matches('input,select'))render()};
+db.doc('ep-config/main').onSnapshot(d=>{if(d.exists){Object.assign(S,d.data());lsave();re()}else if(!d.metadata.fromCache)save()});
+REC.forEach(c=>db.collection('ep-'+c).onSnapshot(q=>{S[c]=q.docs.map(d=>d.data()).sort((a,b)=>a.ts-b.ts);lsave();re()}))}
+
+const RL={pdg:'PDG',responsable:'Responsable',employe:'Employé',investisseur:'Investisseur'},ST=['Reçu','En cours','Prêt','Livré'],
+CAT=['Loyer','Salaires','Lessive & produits','Eau & électricité','Transport','Maintenance','Autres'],PAY='<option>Espèces</option><option>Wave</option><option>Orange Money</option>',
+ALL=['pdg','responsable','employe'];
+const NAV=[['dash','Tableau de bord','📊',ALL],['ventes','Commandes','🧺',ALL],['cartes','Cartes d’abonnement','💳',ALL],['depenses','Dépenses','💸',['pdg','responsable']],
+['postes','Postes','🏬',['pdg']],['equipe','Personnel','👥',['pdg']],['finances','Finances','💰',['pdg']],['invest','Investisseurs','📈',['pdg','investisseur']],['tarifs','Tarifs & réglages','⚙️',['pdg']]];
+const pdg=()=>me.role==='pdg',mine=()=>pdg()?S.postes:S.postes.filter(p=>p.id===me.poste),vis=a=>pdg()?a:a.filter(x=>x.poste===me.poste),
+pn=id=>(S.postes.find(p=>p.id===id)||{}).name||'—',rest=o=>o.total-o.paid,sum=(a,f)=>a.reduce((s,x)=>s+f(x),0),
+opts=(a,sel)=>a.map(x=>`<option value="${x[0]}" ${x[0]===sel?'selected':''}>${e(x[1])}</option>`).join(''),pOpts=()=>opts(mine().map(p=>[p.id,p.name])),
+k=(l,x)=>`<div class="kpi"><span>${l}</span><b>${x}</b></div>`,
+perBar=()=>`<div class="per"><input type="month" value="${per}" onchange="per=this.value;render()"><button class="btn" onclick="per='';render()">Tout</button></div>`;
+
+function showLogin(){$('fab').style.display='none';$('login').style.display='flex';$('ln').value='';$('lp').value='';$('le').textContent=''}
+function showPub(){$('login').style.display='none';document.querySelector('.app').style.display='none';$('fab').style.display='none';$('pub').style.display='block';$('pb').textContent=me?'Retour à l’appli':'Espace personnel';pubInfo();pubListen()}
+function enterApp(){$('login').style.display='none';$('pub').style.display='none';document.querySelector('.app').style.display='';startInterior();render()}
+function logout(){me=null;sessionStorage.removeItem('ep');showPub()}
+async function login(){const n=v('ln').trim().toLowerCase(),p=v('lp');$('le').textContent='Vérification…';
+try{await ready;if(db){const d=await db.doc('ep-config/main').get();if(d.exists){Object.assign(S,d.data());lsave()}}}catch(x){}
+const u=S.users.find(x=>x.name.toLowerCase()===n&&x.pin===p);if(!u)return $('le').textContent='Nom ou code incorrect';me=u;sessionStorage.setItem('ep',u.id);page='dash';enterApp()}
+function render(){const ok=NAV.filter(n=>n[3].includes(me.role));if(!ok.find(n=>n[0]===page))page=ok[0][0];
+$('nav').innerHTML='<button class="ni" onclick="showPub()" style="background:#ffffff14;color:#fff;margin-bottom:10px"><span>🌐</span>Page client</button>'+ok.map(n=>`<button class="ni ${n[0]===page?'on':''}" onclick="go('${n[0]}')"><span>${n[2]}</span>${n[1]}</button>`).join('');
+$('ttl').textContent=ok.find(n=>n[0]===page)[1];$('who').textContent=me.name+(me.poste?' · '+pn(me.poste):'');$('cont').innerHTML=P[page]();$('side').classList.remove('open');$('fab').style.display=ALL.includes(me.role)&&page!=='ventes'?'flex':'none';if(page==='ventes')cardOpts()}
+function newO(){page='ventes';render();$('oc')&&($('oc').scrollIntoView({block:'center'}),$('oc').focus())}
+const go=p=>{page=p;render()};
+
+function tbl(O){return O.length?`<table><tr><th>N°</th><th>Date</th><th>Poste</th><th>Client</th><th>Service</th><th>Kg</th><th>Total</th><th>Solde</th><th>Statut</th><th></th></tr>${O.slice().reverse().map(o=>`<tr><td>${o.no}</td><td>${o.date}</td><td>${e(pn(o.poste))}</td><td>${e(o.client)}<br><small>${e(o.tel)}</small></td><td>${e(o.svc)}</td><td>${o.kg}</td><td>${F(o.total)}</td><td>${rest(o)>0?`<span class="pill no">${F(rest(o))}</span> <button class="btn s" onclick="pay('${o.id}')">Encaisser</button>`:'<span class="pill ok">Payé</span>'}</td><td><span class="pill ${o.st==='Livré'?'ok':o.st==='Prêt'?'w':''}">${o.st}</span></td><td>${o.st!=='Livré'?`<button class="btn s" onclick="nx('${o.id}')">Marquer ${ST[ST.indexOf(o.st)+1]}</button> `:''}<button class="btn s" onclick="rc('${o.id}')">Reçu</button></td></tr>`).join('')}</table>`:'<div class="em">Aucune commande</div>'}
+
+function fin(m){const inP=d=>!m||d.startsWith(m),O=S.orders.filter(o=>inP(o.date)),C=S.cards.filter(c=>inP(c.date)),X=S.expenses.filter(x=>inP(x.date));
+const rows=S.postes.map(p=>{const ca=sum(O.filter(o=>o.poste===p.id),o=>o.paid)+sum(C.filter(c=>c.poste===p.id),c=>c.prix),dep=sum(X.filter(x=>x.poste===p.id),x=>x.m);return{p,ca,dep,net:ca-dep}});
+const ca=sum(rows,r=>r.ca),dep=sum(rows,r=>r.dep);return{rows,ca,dep,net:ca-dep,imp:sum(O,rest)}}
+
+const P={
+dash(){const O=vis(S.orders),t=O.filter(o=>o.date===today()),cj=sum(vis(S.cards).filter(c=>c.date===today()),c=>c.prix);
+return(pdg()&&me.pin==='0000'?'<div class="panel" style="background:var(--yb)">Le code PDG est encore 0000 : changez-le dans Tarifs & réglages.</div>':'')+
+`<div class="kpis">${k('Commandes aujourd’hui',t.length)}${k('Kg lavés aujourd’hui',sum(t,o=>o.kg))}${k('Encaissé aujourd’hui',F(sum(t,o=>o.paid)+cj))}${k('Impayés',F(sum(O,rest)))}</div><div class="panel"><h3>Commandes en cours</h3>${tbl(O.filter(o=>o.st!=='Livré'))}</div>`},
+ventes(){return mine().length?`<div class="panel"><h3>Nouvelle commande</h3><div class="f">
+<div><label>Poste</label><select id="op" onchange="cardOpts()">${pOpts()}</select></div>
+<div><label>Client</label><input id="oc"></div><div><label>Téléphone</label><input id="ot" type="tel"></div>
+<div><label>Service</label><select id="os" onchange="calc()">${opts(S.services.map(s=>[s.id,`${s.name} — ${F(s.prix)}/kg`]))}</select></div>
+<div><label>Poids (kg)</label><input id="ok" type="number" min="0" step="0.1" oninput="calc()"></div>
+<div><label>Carte d’abonnement</label><select id="ocd" onchange="calc()"></select></div>
+<div><label>Mode de paiement</label><select id="om">${PAY}</select></div>
+<div><label>Montant payé maintenant (F)</label><input id="oa" type="number" min="0"></div></div>
+<p id="ot2" style="margin:12px 0;font-weight:700"></p><button class="btn o" onclick="addO()">Enregistrer la commande</button></div>
+<div class="panel"><h3>Commandes</h3>${tbl(vis(S.orders))}</div>`:'<div class="panel em">Aucun poste disponible. Le PDG doit créer un poste.</div>'},
+cartes(){const C=vis(S.cards);return`<div class="panel"><h3>Vendre une carte</h3>${S.plans.length&&mine().length?`<div class="f"><div><label>Poste</label><select id="cp">${pOpts()}</select></div><div><label>Client</label><input id="cc"></div><div><label>Téléphone</label><input id="ct" type="tel"></div><div><label>Formule</label><select id="cf">${opts(S.plans.map(p=>[p.id,`${p.name} — ${p.kg} kg, ${F(p.prix)}`]))}</select></div><div><label>Paiement</label><select id="cm">${PAY}</select></div><button class="btn o" onclick="addC()">Vendre la carte</button></div>`:'<div class="em">Le PDG doit créer un poste et une formule d’abonnement (Tarifs & réglages).</div>'}</div>
+<div class="panel"><h3>Cartes vendues</h3>${C.length?`<table><tr><th>Code</th><th>Client</th><th>Poste</th><th>Formule</th><th>Reste</th><th>Validité</th></tr>${C.slice().reverse().map(c=>`<tr><td>${c.code}</td><td>${e(c.client)}<br><small>${e(c.tel)}</small></td><td>${e(pn(c.poste))}</td><td>${e(c.plan)}</td><td>${c.reste} / ${c.kg} kg</td><td>${c.exp<today()||c.reste<=0?'<span class="pill no">Terminée</span>':'jusqu’au '+c.exp}</td></tr>`).join('')}</table>`:'<div class="em">Aucune carte vendue</div>'}</div>`},
+depenses(){const X=vis(S.expenses);return`<div class="panel"><h3>Nouvelle dépense</h3><div class="f"><div><label>Poste</label><select id="xp">${pOpts()}</select></div><div><label>Catégorie</label><select id="xc">${CAT.map(c=>`<option>${c}</option>`).join('')}</select></div><div><label>Montant (F)</label><input id="xm" type="number" min="0"></div><div><label>Libellé</label><input id="xl"></div><button class="btn o" onclick="addX()">Ajouter</button></div></div>
+<div class="panel"><h3>Dépenses — total ${F(sum(X,x=>x.m))}</h3>${X.length?`<table><tr><th>Date</th><th>Poste</th><th>Catégorie</th><th>Libellé</th><th>Montant</th><th></th></tr>${X.slice().reverse().map(x=>`<tr><td>${x.date}</td><td>${e(pn(x.poste))}</td><td>${x.cat}</td><td>${e(x.l)}</td><td>${F(x.m)}</td><td>${pdg()?`<button class="btn s" onclick="del('expenses','${x.id}')">Supprimer</button>`:''}</td></tr>`).join('')}</table>`:'<div class="em">Aucune dépense</div>'}</div>`},
+postes(){return`<div class="panel"><h3>Nouveau poste</h3><div class="f"><div><label>Nom</label><input id="pn"></div><div><label>Localisation</label><input id="pl"></div><button class="btn o" onclick="addP()">Créer le poste</button></div></div>
+<div class="panel"><h3>Postes</h3>${S.postes.length?`<table><tr><th>Poste</th><th>Lieu</th><th>Responsable</th><th>Employés</th><th>Commandes</th><th></th></tr>${S.postes.map(p=>{const u=S.users.filter(x=>x.poste===p.id);return`<tr><td>${e(p.name)}</td><td>${e(p.loc)}</td><td>${e(u.filter(x=>x.role==='responsable').map(x=>x.name).join(', ')||'— à nommer')}</td><td>${e(u.filter(x=>x.role==='employe').map(x=>x.name).join(', ')||'—')}</td><td>${S.orders.filter(o=>o.poste===p.id).length}</td><td><button class="btn s" onclick="dP('${p.id}')">Supprimer</button></td></tr>`}).join('')}</table>`:'<div class="em">Aucun poste</div>'}</div>`},
+equipe(){const U=S.users.filter(u=>u.role!=='investisseur');return`<div class="panel"><h3>Ajouter du personnel</h3><div class="f"><div><label>Nom</label><input id="un"></div><div><label>Rôle</label><select id="ur"><option value="responsable">Responsable de poste</option><option value="employe">Employé</option></select></div><div><label>Poste</label><select id="up">${opts(S.postes.map(p=>[p.id,p.name]))}</select></div><div><label>Code d’accès</label><input id="uc"></div><button class="btn o" onclick="addU()">Ajouter</button></div></div>
+<div class="panel"><h3>Personnel</h3><table><tr><th>Nom</th><th>Rôle</th><th>Poste</th><th></th></tr>${U.map(u=>`<tr><td>${e(u.name)}</td><td>${RL[u.role]}</td><td>${u.poste?e(pn(u.poste)):'Tous les postes'}</td><td>${u.role==='pdg'?'':`<button class="btn s" onclick="delU('${u.id}')">Supprimer</button>`}</td></tr>`).join('')}</table></div>`},
+finances(){const f=fin(per);return perBar()+`<div class="kpis">${k('Encaissé',F(f.ca))}${k('Dépenses',F(f.dep))}${k('Bénéfice net',F(f.net))}${k('Impayés clients',F(f.imp))}</div><div class="panel"><h3>Résultat par poste</h3>${f.rows.length?`<table><tr><th>Poste</th><th>Encaissé</th><th>Dépenses</th><th>Net</th></tr>${f.rows.map(r=>`<tr><td>${e(r.p.name)}</td><td>${F(r.ca)}</td><td>${F(r.dep)}</td><td><span class="pill ${r.net>=0?'ok':'no'}">${F(r.net)}</span></td></tr>`).join('')}</table>`:'<div class="em">Aucun poste</div>'}</div>`},
+invest(){const f=fin(per),T=S.totalActions||1,pool=Math.max(0,f.net)*S.payout/100,I=S.users.filter(u=>u.role==='investisseur'),L=pdg()?I:I.filter(u=>u.id===me.id);
+return perBar()+`<div class="kpis">${k('Encaissé',F(f.ca))}${k('Dépenses',F(f.dep))}${k('Bénéfice net',F(f.net))}${k('À répartir ('+S.payout+' %)',F(pool))}</div>`+
+(pdg()?`<div class="panel"><h3>Ajouter un investisseur</h3><div class="f"><div><label>Nom</label><input id="in"></div><div><label>Nombre d’actions</label><input id="ia" type="number" min="0"></div><div><label>Montant investi (F)</label><input id="im" type="number" min="0"></div><div><label>Code d’accès</label><input id="ic"></div><button class="btn o" onclick="addI()">Ajouter</button></div></div>`:'')+
+`<div class="panel"><h3>Actionnaires — ${T} actions au total${pdg()?', '+(T-sum(I,u=>u.actions))+' non attribuées':''}</h3>${L.length?`<table><tr><th>Investisseur</th><th>Actions</th><th>Part</th><th>Investi</th><th>Dividende</th><th></th></tr>${L.map(u=>`<tr><td>${e(u.name)}</td><td>${u.actions}</td><td>${(u.actions/T*100).toFixed(1)} %</td><td>${F(u.investi)}</td><td><b>${F(pool*u.actions/T)}</b></td><td>${pdg()?`<button class="btn s" onclick="delU('${u.id}')">Supprimer</button>`:''}</td></tr>`).join('')}</table>`:'<div class="em">Aucun investisseur</div>'}</div>`},
+tarifs(){return`<div class="panel"><h3>Prix au kilo (F)</h3><table><tr><th>Service</th><th>Prix / kg</th></tr>${S.services.map(s=>`<tr><td>${e(s.name)}</td><td><input type="number" min="0" value="${s.prix}" onchange="sp('${s.id}',this.value)"></td></tr>`).join('')}</table>
+<div class="f" style="margin-top:14px"><div><label>Nouveau service</label><input id="sn"></div><div><label>Prix / kg</label><input id="spx" type="number" value="300"></div><button class="btn o" onclick="addS()">Ajouter le service</button></div></div>
+<div class="panel"><h3>Formules d’abonnement</h3>${S.plans.length?`<table><tr><th>Formule</th><th>Kilos</th><th>Prix</th><th>Validité</th><th></th></tr>${S.plans.map(p=>`<tr><td>${e(p.name)}</td><td>${p.kg} kg</td><td>${F(p.prix)}</td><td>${p.jours} jours</td><td><button class="btn s" onclick="del('plans','${p.id}')">Supprimer</button></td></tr>`).join('')}</table>`:'<div class="em">Aucune formule</div>'}
+<div class="f" style="margin-top:14px"><div><label>Nom</label><input id="fn"></div><div><label>Kilos inclus</label><input id="fk" type="number"></div><div><label>Prix (F)</label><input id="fp" type="number"></div><div><label>Validité (jours)</label><input id="fj" type="number" value="30"></div><button class="btn o" onclick="addF()">Ajouter la formule</button></div></div>
+<div class="panel"><h3>Page publique des clients</h3><p>Lien à donner aux clients (ouvre directement la page client) :<br><b>${e(location.href.split(/[?#]/)[0])}?client</b></p><p style="margin-top:8px;font-size:12.5px;color:var(--m)">Les clients ne voient ni les commandes des autres, ni les finances, ni le personnel. Le personnel retrouve la page client en haut du menu.</p></div>
+<div class="panel"><h3>Actions & code PDG</h3><div class="f"><div><label>Nombre total d’actions</label><input id="sa" type="number" min="1" value="${S.totalActions}"></div><div><label>Part du bénéfice net distribuée (%)</label><input id="sd" type="number" min="0" max="100" value="${S.payout}"></div><button class="btn" onclick="setA()">Enregistrer</button></div>
+<div class="f" style="margin-top:14px"><div><label>Nouveau code PDG (4 caractères min.)</label><input id="sc" type="password"></div><button class="btn" onclick="setPin()">Changer le code</button></div></div>`}
+};
+
+function cardOpts(){const s=$('ocd');if(!s)return;s.innerHTML='<option value="">Sans carte</option>'+opts(S.cards.filter(c=>c.poste===v('op')&&c.reste>0&&c.exp>=today()).map(c=>[c.id,`${c.code} · ${c.client} · ${c.reste} kg`]));calc()}
+function calc(){const s=S.services.find(x=>x.id===v('os')),kg=+v('ok')||0,c=S.cards.find(x=>x.id===v('ocd')),u=c?Math.min(kg,c.reste):0,t=Math.round((kg-u)*(s?s.prix:0));$('oa').value=t;$('ot2').textContent=(u?u+' kg pris sur la carte · ':'')+'À payer : '+F(t);return{s,kg,c,u,t}}
+function addO(){const{s,kg,c,u,t}=calc(),tel=v('ot').trim();if(!kg||!v('oc').trim()||tel.replace(/\D/g,'').length<8)return alert('Indiquez le client, son téléphone (pour le suivi) et le poids.');
+if(c){c.reste=+(c.reste-u).toFixed(2);put('cards',c)}
+const o={id:uid(),no:'EP-'+uid().slice(-5).toUpperCase(),poste:v('op'),date:today(),ts:Date.now(),client:v('oc').trim(),tel,svc:s.name,kg,total:t,paid:Math.min(t,+v('oa')||0),mode:v('om'),card:c?c.id:'',cardKg:u,st:'Reçu',by:me.id};S.orders.push(o);put('orders',o);render()}
+const pay=id=>{const o=S.orders.find(x=>x.id===id);o.paid=o.total;put('orders',o);render()},nx=id=>{const o=S.orders.find(x=>x.id===id);o.st=ST[ST.indexOf(o.st)+1];put('orders',o);render()};
+function rc(id){const o=S.orders.find(x=>x.id===id),w=open('','_blank','width=340,height=480');if(!w)return;w.document.write(`<pre style="font:13px monospace">EXPRESS PRESSING\n${e(pn(o.poste))}\n${o.no} — ${o.date}\nClient : ${e(o.client)} ${e(o.tel)}\n${e(o.svc)} : ${o.kg} kg${o.cardKg?' (dont '+o.cardKg+' kg sur carte)':''}\nTotal : ${F(o.total)}\nPayé : ${F(o.paid)}\nSolde : ${F(rest(o))}\n\nMerci de votre confiance !</pre>`);w.print()}
+function addC(){const p=S.plans.find(x=>x.id===v('cf')),tel=v('ct').trim();if(!v('cc').trim()||tel.replace(/\D/g,'').length<8)return alert('Indiquez le client et son téléphone.');
+const c={id:uid(),code:'C-'+uid().slice(-5).toUpperCase(),ts:Date.now(),poste:v('cp'),client:v('cc').trim(),tel,plan:p.name,kg:p.kg,reste:p.kg,prix:p.prix,date:today(),exp:new Date(Date.now()+p.jours*864e5).toISOString().slice(0,10),mode:v('cm'),by:me.id};S.cards.push(c);put('cards',c);render()}
+function addX(){const m=+v('xm');if(!m||!v('xp'))return alert('Indiquez le poste et le montant.');const x={id:uid(),ts:Date.now(),poste:v('xp'),date:today(),cat:v('xc'),m,l:v('xl').trim(),by:me.id};S.expenses.push(x);put('expenses',x);render()}
+function del(col,id){if(!confirm('Supprimer ?'))return;S[col]=S[col].filter(x=>x.id!==id);REC.includes(col)?rm(col,id):save();render()}
+function addP(){if(!v('pn').trim())return alert('Indiquez le nom du poste.');S.postes.push({id:uid(),name:v('pn').trim(),loc:v('pl').trim()});save();render()}
+function dP(id){if(S.orders.some(o=>o.poste===id)||S.cards.some(c=>c.poste===id)||S.expenses.some(x=>x.poste===id)||S.users.some(u=>u.poste===id))return alert('Ce poste a du personnel ou un historique : suppression impossible.');del('postes',id)}
+function addU(){const n=v('un').trim(),r=v('ur'),p=v('up'),c=v('uc').trim();if(!n||!c||!p)return alert('Nom, poste et code requis.');if(r==='responsable'&&S.users.some(u=>u.role==='responsable'&&u.poste===p))return alert('Ce poste a déjà un responsable.');S.users.push({id:uid(),name:n,role:r,poste:p,pin:c});save();render()}
+const delU=id=>del('users',id);
+function addI(){const n=v('in').trim(),c=v('ic').trim();if(!n||!c)return alert('Nom et code requis.');S.users.push({id:uid(),name:n,role:'investisseur',actions:+v('ia')||0,investi:+v('im')||0,pin:c});save();render()}
+const sp=(id,x)=>{S.services.find(s=>s.id===id).prix=+x||0;save()};
+function addS(){if(!v('sn').trim())return;S.services.push({id:uid(),name:v('sn').trim(),prix:+v('spx')||0});save();render()}
+function addF(){if(!v('fn').trim()||!+v('fk'))return alert('Nom et kilos requis.');S.plans.push({id:uid(),name:v('fn').trim(),kg:+v('fk'),prix:+v('fp')||0,jours:+v('fj')||30});save();render()}
+function setA(){S.totalActions=Math.max(1,+v('sa')||1);S.payout=Math.min(100,Math.max(0,+v('sd')||0));save();render()}
+function setPin(){if(v('sc').length<4)return alert('4 caractères minimum.');me.pin=v('sc');save();render();alert('Code PDG modifié.')}
+
+function pubShell(){$('pub').innerHTML=`<div class="ph"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b>EXPRESS PRESSING</b><button class="btn s" id="pb" onclick="me?enterApp():showLogin()">Espace personnel</button></div><span>Suivez votre linge, consultez nos tarifs</span></div><div class="pw"><div class="panel"><h3>Suivre ma commande ou ma carte</h3><div class="f"><div><label>N° de commande ou code carte</label><input id="qn" placeholder="EP-XXXXX ou C-XXXXX"></div><div><label>Votre téléphone</label><input id="qt" type="tel"></div><button class="btn o" onclick="track()">Voir</button></div><div id="qr" style="margin-top:14px;line-height:1.6"></div></div><div id="pi"></div></div>`}
+function pubInfo(){const i=$('pi');if(!i)return;const X=PI||(FB.apiKey?null:S);if(!X)return i.innerHTML='<div class="em">Chargement…</div>';i.innerHTML=`<div class="panel"><h3>Nos tarifs</h3><table>${X.services.map(s=>`<tr><td>${e(s.name)}</td><td><b>${F(s.prix)}</b> / kg</td></tr>`).join('')}</table></div>`+
+(X.plans.length?`<div class="panel"><h3>Cartes d’abonnement</h3><table>${X.plans.map(p=>`<tr><td>${e(p.name)}</td><td>${p.kg} kg</td><td><b>${F(p.prix)}</b></td><td>${p.jours} jours</td></tr>`).join('')}</table></div>`:'')+
+(X.postes.length?`<div class="panel"><h3>Nos postes</h3><table>${X.postes.map(p=>`<tr><td>${e(p.name)}</td><td>${e(p.loc)}</td></tr>`).join('')}</table></div>`:'')}
+async function track(){const n=v('qn').trim().toUpperCase(),t=v('qt').replace(/\D/g,'').slice(-8),r=$('qr');if(!n||t.length<8)return r.textContent='Entrez le numéro et votre téléphone (8 chiffres minimum).';
+const card=n.startsWith('C-'),col=card?'cards':'orders',fld=card?'code':'no';let L;r.textContent='Recherche…';
+try{await ready;L=db?(await db.collection('ep-'+col).where(fld,'==',n).get()).docs.map(d=>d.data()):S[col].filter(x=>x[fld]===n)}catch(x){return r.textContent='Service indisponible, réessayez.'}
+const o=L.find(x=>(x.tel||'').replace(/\D/g,'').slice(-8)===t);
+r.innerHTML=!o?'<span class="pill no">Aucun résultat : vérifiez le numéro et le téléphone.</span>':card?`Carte ${o.code} — ${e(o.plan)} : <b>${o.reste} kg restants</b> sur ${o.kg}, valable jusqu’au ${o.exp}.`:`Commande ${o.no} du ${o.date} : <span class="pill ${o.st==='Livré'?'ok':o.st==='Prêt'?'w':''}">${o.st}</span><br>${o.kg} kg · total ${F(o.total)} · reste à payer <b>${F(o.total-o.paid)}</b>`}
+{const u0=S.users.find(x=>x.id===sessionStorage.getItem('ep')),cl=/client/.test(location.search+location.hash);pubShell();if(u0)me=u0;cl?showPub():u0?enterApp():showLogin()}
+</script>
+</body>
+</html>
